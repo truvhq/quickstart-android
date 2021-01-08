@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <script src="https://cdn.citadelid.com/bridge.js"></script>
+    </head>
+    <body>
+    <script>
+      (async function () {
+        const params = new URLSearchParams(window.location.search)
+        const bridgeToken = params.get("bridge_token")
+        const bridge = CitadelBridge.init({
+          clientName: 'Citadel Quickstart',
+          bridgeToken: bridgeToken,
+          product: 'employment',
+          origin: '*',
+          trackingInfo: 'any data for tracking current user',
+          onLoad: citadelInterface.onLoad,
+          onEvent: citadelInterface.onEvent,
+          onSuccess: citadelInterface.onSuccess,
+          onClose: citadelInterface.onClose,
+        });
+        window.bridge = bridge;
+      })();
+    </script>
+        <button onclick="bridge.open()">Open Bridge</button>
+    </body>
+</html>
