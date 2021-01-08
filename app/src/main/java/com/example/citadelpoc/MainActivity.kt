@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
     fun getBridgeToken() {
         val clientId = BuildConfig.citadelClientId
         val secret = BuildConfig.citadelSecret
-        var url = BuildConfig.citadelApiUrl
+        var url = "${BuildConfig.citadelApiUrl}bridge-tokens/"
 
         val request = object: JsonObjectRequest(Request.Method.POST, url, null,
                 Response.Listener { response: JSONObject ->
