@@ -1,11 +1,12 @@
 package com.example.citadelpoc
 
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
+import android.net.Uri
 import android.os.Bundle
-import android.webkit.WebView
 import android.util.Log
+import android.webkit.WebSettings
+import android.webkit.WebView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.VolleyError
@@ -18,8 +19,8 @@ class MainActivity : AppCompatActivity() {
     private inner class JsInterface {
 
         @android.webkit.JavascriptInterface
-        fun onSuccess(public_token: String) {
-            Toast.makeText(applicationContext, "Public Token: $public_token", Toast.LENGTH_LONG).show()
+        fun onSuccess(payload: JSONObject) {
+            Toast.makeText(applicationContext, "Successful verification. Public Token: $payload.public_token", Toast.LENGTH_LONG).show()
         }
 
         fun onLoad() {
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity() {
 
         fun onClose() {
             Log.d("CitadelID", "Bridge Closed")
+            Toast.makeText(applicationContext, "Verification wasn't finished", Toast.LENGTH_LONG).show()
         }
 
         fun onEvent(eventType: String, payload: JSONObject) {
@@ -66,9 +68,20 @@ class MainActivity : AppCompatActivity() {
 
     fun loadWidget(bridgeToken: String) {
         val myWebView: WebView = findViewById(R.id.webview)
+        myWebView.clearCache(true)
         myWebView.settings.javaScriptEnabled = true
         myWebView.addJavascriptInterface(JsInterface(), "citadelInterface")
-        myWebView.loadUrl("file:///android_asset/www/index.html?bridge_token=$bridgeToken")
+        val builder: Uri.Builder = Uri.Builder()
+        builder.scheme("https")
+            .authority("cdn-dev.citadelid.com")
+            .appendPath("mobile.html")
+            .appendQueryParameter("bridge_token", bridgeToken)
+            .appendQueryParameter("product", "employment")
+            .appendQueryParameter("tracking_info", "tracking_info")
+            .appendQueryParameter("client", "Your company name")
+            .fragment("section-name")
+        Log.d("CITADEL", builder.build().toString())
+        myWebView.loadUrl(builder.build().toString())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
