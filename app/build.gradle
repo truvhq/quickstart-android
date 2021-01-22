@@ -27,6 +27,7 @@ android {
             buildConfigField "String", "citadelApiUrl", localProperties["citadelApiUrl"]
             buildConfigField "String", "citadelClientId", localProperties["citadelClientId"]
             buildConfigField "String", "citadelSecret", localProperties["citadelSecret"]
+            buildConfigField "String", "citadelProductType", localProperties["citadelProductType"]
         }
         release {
             minifyEnabled false

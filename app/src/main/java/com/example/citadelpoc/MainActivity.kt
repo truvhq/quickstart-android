@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
         @android.webkit.JavascriptInterface
         fun onSuccess(payloadJSON: String) {
-            val payload: JSONObject = JSONObject(payloadJSON)
+            val payload = JSONObject(payloadJSON)
             val publicToken = payload.getString("public_token")
             citadel.getAccessToken(publicToken) { accessToken ->
                 Toast.makeText(applicationContext, "Access Token: $accessToken", Toast.LENGTH_LONG).show()
@@ -58,14 +58,13 @@ class MainActivity : AppCompatActivity() {
         myWebView.addJavascriptInterface(JsInterface(), "citadelInterface")
         val builder: Uri.Builder = Uri.Builder()
         builder.scheme("https")
-            .authority("cdn-dev.citadelid.com")
+            .authority("cdn.citadelid.com")
             .appendPath("mobile.html")
             .appendQueryParameter("bridge_token", bridgeToken)
-            .appendQueryParameter("product", "employment")
+            .appendQueryParameter("product", BuildConfig.citadelProductType)
             .appendQueryParameter("tracking_info", "tracking_info")
             .appendQueryParameter("client", "Your company name")
             .fragment("section-name")
-        Log.d("CITADEL", builder.build().toString())
         myWebView.loadUrl(builder.build().toString())
     }
 
