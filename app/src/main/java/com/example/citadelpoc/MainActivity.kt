@@ -1,69 +1,54 @@
 package com.example.citadelpoc
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.webkit.WebSettings
 import android.webkit.WebView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.VolleyError
-import com.android.volley.toolbox.JsonObjectRequest
 import org.json.JSONObject
 
 
 class MainActivity : AppCompatActivity() {
 
+    lateinit var citadel: Citadel
+
     private inner class JsInterface {
 
         @android.webkit.JavascriptInterface
-        fun onSuccess(payload: JSONObject) {
-            Toast.makeText(applicationContext, "Successful verification. Public Token: $payload.public_token", Toast.LENGTH_LONG).show()
+        fun onSuccess(payloadJSON: String) {
+            val payload: JSONObject = JSONObject(payloadJSON)
+            val publicToken = payload.getString("public_token")
+            citadel.getAccessToken(publicToken) { accessToken ->
+                Toast.makeText(applicationContext, "Access Token: $accessToken", Toast.LENGTH_LONG).show()
+                if(accessToken != null) {
+                    citadel.getEmploymentInfoByToken(accessToken) { employmentInfo ->
+                        if(employmentInfo != null) {
+                            showResults(employmentInfo)
+                        }
+                    }
+                }
+            }
         }
 
+        @android.webkit.JavascriptInterface
         fun onLoad() {
             Log.d("CitadelID", "Bridge Loaded")
         }
 
+        @android.webkit.JavascriptInterface
         fun onClose() {
             Log.d("CitadelID", "Bridge Closed")
-            Toast.makeText(applicationContext, "Verification wasn't finished", Toast.LENGTH_LONG).show()
         }
 
-        fun onEvent(eventType: String, payload: JSONObject) {
+        @android.webkit.JavascriptInterface
+        fun onEvent(payloadJSON: String) {
+            val payload = JSONObject(payloadJSON)
+            val eventType = payload.getString("event_type")
             Log.d("CitadelID", "Event: $eventType")
         }
-    }
-
-    fun getBridgeToken() {
-        val clientId = BuildConfig.citadelClientId
-        val secret = BuildConfig.citadelSecret
-        var url = "${BuildConfig.citadelApiUrl}bridge-tokens/"
-
-        val request = object: JsonObjectRequest(Request.Method.POST, url, null,
-                Response.Listener { response: JSONObject ->
-                    Toast.makeText(applicationContext, response.getString("bridge_token"), Toast.LENGTH_LONG).show()
-                    loadWidget(response.getString("bridge_token"))
-                },
-                Response.ErrorListener { error: VolleyError ->
-                    Log.e("CITADEL", error.toString())
-                    Toast.makeText(applicationContext, "ERROR", Toast.LENGTH_LONG).show()
-                }
-        )
-        {
-            override fun getHeaders(): MutableMap<String, String> {
-                val headers = HashMap<String, String>()
-                headers["X-Access-Client-Id"] = clientId
-                headers["X-Access-Secret"] = secret
-                headers["Content-Type"] = "application/json"
-                headers["Accept"] = "application/json"
-                return headers
-            }
-        }
-
-        CitadelSingleton.getInstance(this.applicationContext).addToRequestQueue(request)
     }
 
     fun loadWidget(bridgeToken: String) {
@@ -84,9 +69,23 @@ class MainActivity : AppCompatActivity() {
         myWebView.loadUrl(builder.build().toString())
     }
 
+    fun showResults(verification: JSONObject) {
+        val intent = Intent(this, DisplayEmploymentActivity::class.java).apply {
+            putExtra("verification", verification.toString())
+        }
+        startActivity(intent)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        citadel = Citadel(applicationContext)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        getBridgeToken()
+        citadel.getBridgeToken { token ->
+            if(token != null) {
+                loadWidget(token)
+            } else {
+                Toast.makeText(applicationContext,"Issue with Bridge Token", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }
