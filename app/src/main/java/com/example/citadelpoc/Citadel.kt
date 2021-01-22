@@ -50,4 +50,18 @@ class Citadel(context: Context) {
             }
         }
     }
+
+    public fun getIncomeInfoByToken(accessToken: String, callback: (JSONObject?) -> Unit) {
+        var endpoint = "verifications/incomes/"
+        var body = JSONObject()
+        body.put("access_token", accessToken)
+
+        VolleySingleton.getInstance(appContext).addToRequestQueue(Request.Method.POST, endpoint, body) { response ->
+            if(response != null) {
+                callback(response)
+            } else {
+                callback(null)
+            }
+        }
+    }
 }

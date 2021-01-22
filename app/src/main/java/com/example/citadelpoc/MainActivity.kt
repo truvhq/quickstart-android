@@ -22,12 +22,11 @@ class MainActivity : AppCompatActivity() {
             val payload = JSONObject(payloadJSON)
             val publicToken = payload.getString("public_token")
             citadel.getAccessToken(publicToken) { accessToken ->
-                Toast.makeText(applicationContext, "Access Token: $accessToken", Toast.LENGTH_LONG).show()
                 if(accessToken != null) {
-                    citadel.getEmploymentInfoByToken(accessToken) { employmentInfo ->
-                        if(employmentInfo != null) {
-                            showResults(employmentInfo)
-                        }
+                    if(BuildConfig.citadelProductType == "employment") {
+                        getEmploymentVerification(accessToken)
+                    } else {
+                        getIncomeVerification(accessToken)
                     }
                 }
             }
@@ -51,6 +50,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun getEmploymentVerification(accessToken: String) {
+        citadel.getEmploymentInfoByToken(accessToken) { employmentInfo ->
+            if(employmentInfo != null) {
+                showEmploymentResults(employmentInfo)
+            }
+        }
+    }
+
+    fun getIncomeVerification(accessToken: String) {
+        citadel.getIncomeInfoByToken(accessToken) { incomeInfo ->
+            if(incomeInfo != null) {
+                showIncomeResults(incomeInfo)
+            }
+        }
+    }
+
     fun loadWidget(bridgeToken: String) {
         val myWebView: WebView = findViewById(R.id.webview)
         myWebView.clearCache(true)
@@ -58,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         myWebView.addJavascriptInterface(JsInterface(), "citadelInterface")
         val builder: Uri.Builder = Uri.Builder()
         builder.scheme("https")
-            .authority("cdn.citadelid.com")
+            .authority("cdn-dev.citadelid.com")
             .appendPath("mobile.html")
             .appendQueryParameter("bridge_token", bridgeToken)
             .appendQueryParameter("product", BuildConfig.citadelProductType)
@@ -68,8 +83,15 @@ class MainActivity : AppCompatActivity() {
         myWebView.loadUrl(builder.build().toString())
     }
 
-    fun showResults(verification: JSONObject) {
+    fun showEmploymentResults(verification: JSONObject) {
         val intent = Intent(this, DisplayEmploymentActivity::class.java).apply {
+            putExtra("verification", verification.toString())
+        }
+        startActivity(intent)
+    }
+
+    fun showIncomeResults(verification: JSONObject) {
+        val intent = Intent(this, DisplayIncomeActivity::class.java).apply {
             putExtra("verification", verification.toString())
         }
         startActivity(intent)
