@@ -8,6 +8,7 @@ of the project with the following content:
 citadelClientId="<Client ID>"
 citadelSecret="<Client Secret>"
 citadelApiUrl="https://prod.citadelid.com/v1/"
+citadelProductType="employment"
 ```
 
 Then run in Android Studio.
