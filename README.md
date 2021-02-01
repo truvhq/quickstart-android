@@ -17,7 +17,7 @@ citadelSecret="<access_key>"
 citadelApiUrl="https://prod.citadelid.com/v1/"
 citadelProductType="<employment or income>"
 ```
-5. Open the project in Android Studio and run the app
+4. Open the project in Android Studio and run the app
 
 # Run your first verification
 ## Overview
