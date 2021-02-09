@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         myWebView.addJavascriptInterface(JsInterface(), "citadelInterface")
         val builder: Uri.Builder = Uri.Builder()
         builder.scheme("https")
-            .authority("cdn-dev.citadelid.com")
+            .authority("cdn.citadelid.com")
             .appendPath("mobile.html")
             .appendQueryParameter("bridge_token", bridgeToken)
             .appendQueryParameter("product", BuildConfig.citadelProductType)
