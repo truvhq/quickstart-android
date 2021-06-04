@@ -11,7 +11,9 @@ class Citadel(context: Context) {
 
     public fun getBridgeToken(callback: (String?) -> Unit) {
         var endpoint = "bridge-tokens/"
-        VolleySingleton.getInstance(appContext).addToRequestQueue(Request.Method.POST, endpoint, null) { response ->
+        var body = JSONObject()
+        body.put("product_type", BuildConfig.citadelProductType)
+        VolleySingleton.getInstance(appContext).addToRequestQueue(Request.Method.POST, endpoint, body) { response ->
             if(response != null) {
                 callback(response.getString("bridge_token"))
             } else {
@@ -21,16 +23,13 @@ class Citadel(context: Context) {
     }
 
     public fun getAccessToken(publicToken: String, callback: (String?) -> Unit) {
-        var endpoint = "access-tokens/"
+        var endpoint = "link-access-tokens/"
         var body = JSONObject()
-        var publicTokensArray = JSONArray()
-        publicTokensArray.put(publicToken)
-        body.put("public_tokens", publicTokensArray)
+        body.put("public_token", publicToken)
 
         VolleySingleton.getInstance(appContext).addToRequestQueue(Request.Method.POST, endpoint, body) { response ->
             if(response != null) {
-                var responseArray = response.getJSONArray("access_tokens")
-                callback(responseArray.getString(0))
+                callback(response.getString("access_token"))
             } else {
                 callback(null)
             }

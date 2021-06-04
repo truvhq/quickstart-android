@@ -39,7 +39,8 @@ class VolleySingleton constructor(context: Context) {
                     callback(response)
                 },
                 Response.ErrorListener { error: VolleyError ->
-                    Log.e("CitadelID", error.toString())
+                    Log.e("CitadelID", "ERROR with $url")
+                    Log.e("CitadelID", error.message.toString())
                     callback(null)
                 }
         )
