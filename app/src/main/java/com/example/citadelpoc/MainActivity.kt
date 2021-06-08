@@ -76,9 +76,6 @@ class MainActivity : AppCompatActivity() {
             .authority("cdn.citadelid.com")
             .appendPath("mobile.html")
             .appendQueryParameter("bridge_token", bridgeToken)
-            .appendQueryParameter("product", BuildConfig.citadelProductType)
-            .appendQueryParameter("tracking_info", "tracking_info")
-            .appendQueryParameter("client", "Your company name")
             .fragment("section-name")
         myWebView.loadUrl(builder.build().toString())
     }
