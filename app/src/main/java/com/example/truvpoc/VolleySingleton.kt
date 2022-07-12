@@ -1,4 +1,4 @@
-package com.example.citadelpoc
+package com.example.truvpoc
 
 import android.content.Context
 import android.util.Log
@@ -21,7 +21,7 @@ class VolleySingleton constructor(context: Context) {
             }
     }
 
-    var baseUrl = BuildConfig.citadelApiUrl
+    var baseUrl = BuildConfig.truvApiUrl
 
     val requestQueue: RequestQueue = run {
         // applicationContext is key, it keeps you from leaking the
@@ -30,8 +30,8 @@ class VolleySingleton constructor(context: Context) {
     }
 
     fun addToRequestQueue(method: Int, endpoint: String, body: JSONObject?, callback: (JSONObject?) -> Unit) {
-        val clientId = BuildConfig.citadelClientId
-        val secret = BuildConfig.citadelSecret
+        val clientId = BuildConfig.truvClientId
+        val secret = BuildConfig.truvSecret
         var url = "${baseUrl}${endpoint}"
 
         val req = object: JsonObjectRequest(method, url, body,
@@ -39,8 +39,8 @@ class VolleySingleton constructor(context: Context) {
                     callback(response)
                 },
                 Response.ErrorListener { error: VolleyError ->
-                    Log.e("CitadelID", "ERROR with $url")
-                    Log.e("CitadelID", error.message.toString())
+                    Log.e("Truv", "ERROR with $url")
+                    Log.e("Truv", error.message.toString())
                     callback(null)
                 }
         )

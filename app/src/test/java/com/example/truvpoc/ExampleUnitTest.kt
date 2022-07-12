@@ -1,4 +1,4 @@
-package com.example.citadelpoc
+package com.example.truvpoc
 
 import org.junit.Test
 

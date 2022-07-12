@@ -12,7 +12,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.example.citadelpoc"
+        applicationId "com.example.truvpoc"
         minSdkVersion 16
         targetSdkVersion 30
         versionCode 1
@@ -24,10 +24,10 @@ android {
     buildTypes {
         debug {
             minifyEnabled true
-            buildConfigField "String", "citadelApiUrl", localProperties["citadelApiUrl"]
-            buildConfigField "String", "citadelClientId", localProperties["citadelClientId"]
-            buildConfigField "String", "citadelSecret", localProperties["citadelSecret"]
-            buildConfigField "String", "citadelProductType", localProperties["citadelProductType"]
+            buildConfigField "String", "truvApiUrl", localProperties["truvApiUrl"]
+            buildConfigField "String", "truvClientId", localProperties["truvClientId"]
+            buildConfigField "String", "truvSecret", localProperties["truvSecret"]
+            buildConfigField "String", "truvProductType", localProperties["truvProductType"]
         }
         release {
             minifyEnabled false
