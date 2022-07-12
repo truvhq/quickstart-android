@@ -12,9 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name="com.example.truvpoc.DisplayEmploymentActivity"></activity>
-        <activity android:name="com.example.truvpoc.DisplayIncomeActivity"></activity>
-        <activity android:name="com.example.truvpoc.MainActivity">
+        <activity android:name=".DisplayEmploymentActivity"></activity>
+        <activity android:name=".DisplayIncomeActivity"></activity>
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
