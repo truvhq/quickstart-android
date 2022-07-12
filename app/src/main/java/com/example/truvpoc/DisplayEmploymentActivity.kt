@@ -1,16 +1,15 @@
-package com.example.citadelpoc
+package com.example.truvpoc
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
 
-class DisplayIncomeActivity : AppCompatActivity() {
+class DisplayEmploymentActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_display_income)
+        setContentView(R.layout.activity_display_employment)
 
         if (intent.hasExtra("verification")) {
             val verification = JSONObject(intent.getStringExtra("verification"))
@@ -37,7 +36,6 @@ class DisplayIncomeActivity : AppCompatActivity() {
         setEditValue(R.id.textEndDate, employment.getString("end_date"))
         setEditValue(R.id.textPositionType, employment.getString("job_type"))
         setEditValue(R.id.textTitle, employment.getString("job_title"))
-        setEditValue(R.id.textAnnualIncome, employment.getString("annual_salary"))
     }
 
     fun setEditValue(element: Int, value: String) {

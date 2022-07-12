@@ -1,18 +1,17 @@
-package com.example.citadelpoc
+package com.example.truvpoc
 
 import com.android.volley.Request
 import android.content.Context
-import org.json.JSONArray
 import org.json.JSONObject
 
-class Citadel(context: Context) {
+class Truv(context: Context) {
 
     private val appContext = context
 
     public fun getBridgeToken(callback: (String?) -> Unit) {
         var endpoint = "bridge-tokens/"
         var body = JSONObject()
-        body.put("product_type", BuildConfig.citadelProductType)
+        body.put("product_type", BuildConfig.truvProductType)
         VolleySingleton.getInstance(appContext).addToRequestQueue(Request.Method.POST, endpoint, body) { response ->
             if(response != null) {
                 callback(response.getString("bridge_token"))

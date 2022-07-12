@@ -1,4 +1,4 @@
-package com.example.citadelpoc
+package com.example.truvpoc
 
 import android.content.Intent
 import android.net.Uri
@@ -7,13 +7,12 @@ import android.util.Log
 import android.webkit.WebView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.Request
 import org.json.JSONObject
 
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var citadel: Citadel
+    lateinit var truv: Truv
 
     private inner class JsInterface {
 
@@ -21,9 +20,9 @@ class MainActivity : AppCompatActivity() {
         fun onSuccess(payloadJSON: String) {
             val payload = JSONObject(payloadJSON)
             val publicToken = payload.getString("public_token")
-            citadel.getAccessToken(publicToken) { accessToken ->
+            truv.getAccessToken(publicToken) { accessToken ->
                 if(accessToken != null) {
-                    if(BuildConfig.citadelProductType == "employment") {
+                    if(BuildConfig.truvProductType == "employment") {
                         getEmploymentVerification(accessToken)
                     } else {
                         getIncomeVerification(accessToken)
@@ -34,24 +33,24 @@ class MainActivity : AppCompatActivity() {
 
         @android.webkit.JavascriptInterface
         fun onLoad() {
-            Log.d("CitadelID", "Bridge Loaded")
+            Log.d("Truv", "Bridge Loaded")
         }
 
         @android.webkit.JavascriptInterface
         fun onClose() {
-            Log.d("CitadelID", "Bridge Closed")
+            Log.d("Truv", "Bridge Closed")
         }
 
         @android.webkit.JavascriptInterface
         fun onEvent(payloadJSON: String) {
             val payload = JSONObject(payloadJSON)
             val eventType = payload.getString("event_type")
-            Log.d("CitadelID", "Event: $eventType")
+            Log.d("Truv", "Event: $eventType")
         }
     }
 
     fun getEmploymentVerification(accessToken: String) {
-        citadel.getEmploymentInfoByToken(accessToken) { employmentInfo ->
+        truv.getEmploymentInfoByToken(accessToken) { employmentInfo ->
             if(employmentInfo != null) {
                 showEmploymentResults(employmentInfo)
             }
@@ -59,7 +58,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun getIncomeVerification(accessToken: String) {
-        citadel.getIncomeInfoByToken(accessToken) { incomeInfo ->
+        truv.getIncomeInfoByToken(accessToken) { incomeInfo ->
             if(incomeInfo != null) {
                 showIncomeResults(incomeInfo)
             }
@@ -70,10 +69,10 @@ class MainActivity : AppCompatActivity() {
         val myWebView: WebView = findViewById(R.id.webview)
         myWebView.clearCache(true)
         myWebView.settings.javaScriptEnabled = true
-        myWebView.addJavascriptInterface(JsInterface(), "citadelInterface")
+        myWebView.addJavascriptInterface(JsInterface(), "truvInterface")
         val builder: Uri.Builder = Uri.Builder()
         builder.scheme("https")
-            .authority("cdn.citadelid.com")
+            .authority("cdn.truv.com")
             .appendPath("mobile.html")
             .appendQueryParameter("bridge_token", bridgeToken)
             .fragment("section-name")
@@ -95,10 +94,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        citadel = Citadel(applicationContext)
+        truv = Truv(applicationContext)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        citadel.getBridgeToken { token ->
+        truv.getBridgeToken { token ->
             if(token != null) {
                 loadWidget(token)
             } else {
