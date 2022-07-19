@@ -7,20 +7,21 @@ import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
 
 class DisplayIncomeActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_display_income)
 
         if (intent.hasExtra("verification")) {
-            val verification = JSONObject(intent.getStringExtra("verification"))
-            var employment = verification.getJSONArray("employments").getJSONObject(0)
+            val verification = JSONObject(intent.getStringExtra("verification")!!)
+            val employment = verification.getJSONArray("employments").getJSONObject(0)
             setFormValues(employment)
         }
     }
 
-    fun setFormValues(employment: JSONObject) {
-        var profile = employment.getJSONObject("profile")
-        var company = employment.getJSONObject("company")
+    private fun setFormValues(employment: JSONObject) {
+        val profile = employment.getJSONObject("profile")
+        val company = employment.getJSONObject("company")
 
         setEditValue(R.id.textFirstName, profile.getString("first_name"))
         setEditValue(R.id.textLastName, profile.getString("last_name"))
@@ -39,14 +40,13 @@ class DisplayIncomeActivity : AppCompatActivity() {
         setEditValue(R.id.textAnnualIncome, employment.getString("annual_salary"))
     }
 
-    fun setEditValue(element: Int, value: String) {
+    private fun setEditValue(element: Int, value: String) {
         val editText = findViewById<EditText>(element)
         editText.setText(value)
     }
 
-    fun setTextValue(element: Int, value: String) {
-        val editText = findViewById<TextView>(element).apply {
-            text = value
-        }
+    private fun setTextValue(element: Int, value: String) {
+        findViewById<TextView>(element).text = value
     }
+
 }
