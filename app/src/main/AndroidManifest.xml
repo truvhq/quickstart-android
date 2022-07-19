@@ -12,9 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".DisplayEmploymentActivity"></activity>
-        <activity android:name=".DisplayIncomeActivity"></activity>
-        <activity android:name=".MainActivity">
+
+        <activity android:name=".DisplayEmploymentActivity" />
+
+        <activity android:name=".DisplayIncomeActivity" />
+
+        <activity android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
