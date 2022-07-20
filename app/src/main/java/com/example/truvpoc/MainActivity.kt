@@ -1,26 +1,44 @@
 package com.example.truvpoc
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.webkit.WebView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.truv.TruvBridgeView
+import com.truv.TruvEventsListener
+import com.truv.models.TruvEventPayload
+import com.truv.models.TruvSuccessPayload
 import org.json.JSONObject
 
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var truv: Truv
+    private lateinit var truv: Truv
+    private lateinit var myWebView: TruvBridgeView
 
-    private inner class JsInterface {
+    private val truvEventsListener = object : TruvEventsListener {
 
-        @android.webkit.JavascriptInterface
-        fun onSuccess(payloadJSON: String) {
-            val payload = JSONObject(payloadJSON)
-            val publicToken = payload.getString("public_token")
-            truv.getAccessToken(publicToken) { accessToken ->
+        override fun onClose() {
+            Log.d(TAG, "Bridge Closed")
+        }
+
+        override fun onError() {
+            Log.e(TAG, "Bridge Error")
+        }
+
+        override fun onEvent(event: TruvEventPayload.EventType) {
+            Log.d(TAG, "Event: $event")
+        }
+
+        override fun onLoad() {
+            Log.d(TAG, "Bridge Loaded")
+        }
+
+        override fun onSuccess(payload: TruvSuccessPayload) {
+            Log.d(TAG, "Bridge Success")
+
+            truv.getAccessToken(payload.publicToken) { accessToken ->
                 if(accessToken != null) {
                     if(BuildConfig.truvProductType == "employment") {
                         getEmploymentVerification(accessToken)
@@ -31,22 +49,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        @android.webkit.JavascriptInterface
-        fun onLoad() {
-            Log.d("Truv", "Bridge Loaded")
-        }
-
-        @android.webkit.JavascriptInterface
-        fun onClose() {
-            Log.d("Truv", "Bridge Closed")
-        }
-
-        @android.webkit.JavascriptInterface
-        fun onEvent(payloadJSON: String) {
-            val payload = JSONObject(payloadJSON)
-            val eventType = payload.getString("event_type")
-            Log.d("Truv", "Event: $eventType")
-        }
     }
 
     fun getEmploymentVerification(accessToken: String) {
@@ -65,28 +67,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun loadWidget(bridgeToken: String) {
-        val myWebView: WebView = findViewById(R.id.webview)
-        myWebView.clearCache(true)
-        myWebView.settings.javaScriptEnabled = true
-        myWebView.addJavascriptInterface(JsInterface(), "truvInterface")
-        val builder: Uri.Builder = Uri.Builder()
-        builder.scheme("https")
-            .authority("cdn.truv.com")
-            .appendPath("mobile.html")
-            .appendQueryParameter("bridge_token", bridgeToken)
-            .fragment("section-name")
-        myWebView.loadUrl(builder.build().toString())
-    }
-
-    fun showEmploymentResults(verification: JSONObject) {
+    private fun showEmploymentResults(verification: JSONObject) {
         val intent = Intent(this, DisplayEmploymentActivity::class.java).apply {
             putExtra("verification", verification.toString())
         }
         startActivity(intent)
     }
 
-    fun showIncomeResults(verification: JSONObject) {
+    private fun showIncomeResults(verification: JSONObject) {
         val intent = Intent(this, DisplayIncomeActivity::class.java).apply {
             putExtra("verification", verification.toString())
         }
@@ -97,12 +85,21 @@ class MainActivity : AppCompatActivity() {
         truv = Truv(applicationContext)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        myWebView = findViewById(R.id.bridgeView)
+        myWebView.addEventListener(truvEventsListener)
+
         truv.getBridgeToken { token ->
             if(token != null) {
-                loadWidget(token)
+                myWebView.loadBridgeTokenUrl(token)
             } else {
                 Toast.makeText(applicationContext,"Issue with Bridge Token", Toast.LENGTH_LONG).show()
             }
         }
     }
+
+    companion object {
+        private const val TAG = "Truv"
+    }
+
 }

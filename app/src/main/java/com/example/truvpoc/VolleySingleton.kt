@@ -32,7 +32,7 @@ class VolleySingleton constructor(context: Context) {
     fun addToRequestQueue(method: Int, endpoint: String, body: JSONObject?, callback: (JSONObject?) -> Unit) {
         val clientId = BuildConfig.truvClientId
         val secret = BuildConfig.truvSecret
-        var url = "${baseUrl}${endpoint}"
+        val url = "${baseUrl}${endpoint}"
 
         val req = object: JsonObjectRequest(method, url, body,
                 Response.Listener { response: JSONObject ->
