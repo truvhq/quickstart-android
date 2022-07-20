@@ -50,5 +50,5 @@ dependencies {
     implementation 'com.android.volley:volley:1.2.1'
 
     // Truv SDK
-    implementation 'com.github.truvhq:android-sdk:0.1'
+    implementation 'com.github.truvhq:android-sdk:0.2'
 }
