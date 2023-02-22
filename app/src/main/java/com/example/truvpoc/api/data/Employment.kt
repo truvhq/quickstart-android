@@ -13,7 +13,7 @@ data class Employment(
     val jobType: String?,
     @Json(name = "job_title")
     val jobTitle: String?,
-    @Json(name = "annual_salary")
+    @Json(name = "income")
     val annualSalary: String?,
     @Json(name = "profile")
     val profile: Profile,

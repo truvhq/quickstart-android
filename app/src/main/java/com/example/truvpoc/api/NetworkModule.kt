@@ -1,6 +1,6 @@
 package com.example.truvpoc.api
 
-import com.example.truvpoc.BuildConfig
+import com.example.truvpoc.BuildConfig.*
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.Interceptor
@@ -12,9 +12,9 @@ import java.util.concurrent.TimeUnit
 
 object NetworkModule {
 
-    private const val baseUrl = BuildConfig.truvApiUrl
-    private const val clientId = BuildConfig.truvClientId
-    private const val secret = BuildConfig.truvSecret
+    private val baseUrl = truvApiUrl
+    private val clientId = truvClientId
+    private val secret = truvSecret
 
     val moshi = Moshi.Builder()
         .addLast(KotlinJsonAdapterFactory())

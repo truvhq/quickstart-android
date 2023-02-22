@@ -2,17 +2,26 @@ package com.example.truvpoc.api
 
 import com.example.truvpoc.api.response.AccessTokenResult
 import com.example.truvpoc.api.response.BridgeTokenResult
+import com.example.truvpoc.api.response.CreateUserResult
 import com.example.truvpoc.api.response.VerificationInfoResponse
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface TruvApi {
 
     @FormUrlEncoded
-    @POST("bridge-tokens")
+    @POST("users/")
+    suspend fun createUser(
+        @Field("external_user_id") externalUserId: String
+    ): CreateUserResult
+
+    @FormUrlEncoded
+    @POST("users/{user_id}/tokens/")
     suspend fun getBridgeToken(
-        @Field("product_type") productType: String
+            @Path("user_id") userId: String,
+            @Field("product_type") productType: String
     ): BridgeTokenResult
 
     @FormUrlEncoded
@@ -22,13 +31,13 @@ interface TruvApi {
     ): AccessTokenResult
 
     @FormUrlEncoded
-    @POST("verifications/employments")
+    @POST("links/reports/employment/")
     suspend fun getEmploymentInfoByToken(
         @Field("access_token") accessToken: String
     ): VerificationInfoResponse
 
     @FormUrlEncoded
-    @POST("verifications/incomes")
+    @POST("links/reports/income/")
     suspend fun getIncomeInfoByToken(
         @Field("access_token") accessToken: String
     ): VerificationInfoResponse
