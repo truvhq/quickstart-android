@@ -9,20 +9,18 @@ import com.truv.TruvEventsListener
 import com.truv.models.TruvEventPayload
 import com.truv.models.TruvSuccessPayload
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.util.*
 
 class MainViewModel : ViewModel() {
 
     private val api = NetworkModule.api
 
     private val productType = BuildConfig.truvProductType
+
+    private val _userId = MutableStateFlow<String>("")
+    private val userId = _userId.asStateFlow()
 
     private val _bridgeToken = MutableStateFlow<String?>(null)
     val bridgeToken = _bridgeToken.asStateFlow()
@@ -44,7 +42,18 @@ class MainViewModel : ViewModel() {
         Log.d(TAG, "getBridgeToken")
 
         viewModelScope.launch {
-            flowOf(api.getBridgeToken(BuildConfig.truvProductType))
+            flowOf(api.createUser(UUID.randomUUID().toString()))
+                .flowOn(Dispatchers.IO)
+                .catch {
+                    _error.emit("Can't create a user")
+                }
+                .collect {
+                    _userId.emit(it.id)
+                }
+
+            Log.d(TAG, "created user with id: ${userId.value}")
+
+            flowOf(api.getBridgeToken(userId = userId.value, productType = BuildConfig.truvProductType))
                 .flowOn(Dispatchers.IO)
                 .catch {
                     _error.emit("Issue with Bridge Token")
@@ -52,6 +61,7 @@ class MainViewModel : ViewModel() {
                 .collect {
                     _bridgeToken.emit(it.bridgeToken)
                 }
+
         }
     }
 
