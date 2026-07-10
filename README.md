@@ -1,5 +1,5 @@
 # Get started with Android Quickstart
-To get started with Truv API, we recommend following a step-by-step walkthrough in our docs https://docs.truv.com/docs/android-quickstart.
+To get started with Truv API, we recommend following a step-by-step walkthrough in our docs https://docs.truv.com/developers/sdks/android.
 
 ## Requirements
 
